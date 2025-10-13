@@ -1,0 +1,37 @@
+\documentclass[dvipsnames, 12pt]{article}
+
+% Packages
+\input{dep/preamble.tex}
+
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\addbibresource{dep/reference.bib}
+
+
+\title{Amortized Learning. Term Paper. Notes}
+\author{Urakov Mikhail}
+
+\begin{document}
+
+{
+\selectlanguage{english}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+}
+
+
+
+\section{Papers Summaries}
+Here I summarize some main thoughts from papers and add questions that arised after reading joint with answers for some. Papers are organized in the order I read them, so there might be dumb questions that have answer in later articles.
+
+\input{dep/papers_summary}
+
+\newpage
+\printbibliography[]
+
+\end{document}

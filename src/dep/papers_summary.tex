@@ -1,0 +1,46 @@
+\subsection{BayesFlow: Learning Complex Stochastic Models With Invertable Neural Networks \cite{radev2020bayesflowlearningcomplexstochastic}}
+\textbf{Problem}: We have the standart Bayesian setup: model with parameters $\theta$ and data $x$. We want to estimate the posterior $p(\theta \mid x)$. From Bayes theorem we have
+$$
+p(\theta \mid x) \propto p(x \mid \theta) p(\theta)
+$$
+The problem is that in some cases (namely, likelihood-free cases) right-hand side is intractible because we cannot evaluate the $p(x  \mid  \theta)$, but we can sample from it, i.e.
+$$
+x_i \sim p(x \mid \theta) \iff x_i = g(\theta, \xi_i),  \xi_i \sim p(\xi)
+$$
+\textbf{Solution}: Introducing normalizing flow that converts prior into Gaussian 
+
+$$
+\theta \sim p(\theta \mid x) \iff \theta = f^{-1}_{\varphi}(z; x), z \sim N(z \mid 0, \mathbb{I})
+$$
+and considering right loss function we can now learn a summary and inference NN and it will work much more faster for all $\theta$'s and $x$'s
+\subsubsection*{Q$\&$A}
+
+\begin{enumerate}
+    \item How does the noise $\xi$ selection affects the result? 
+        \textbf{Preanswer}: it depends also on simulation we use, and, of course, 
+        it does matter what noise we'll choose, because it changes the $p(x)$ and so $p(x \mid \theta)$
+    \item Why do we use Gaussian in normalizing flow?
+    \item Why don't we minimize the reverse KL divergence? \textbf{Answer}: it is also an option, which is 
+    considered in \cite{Murphy2012MachineL}, Chapter 21 and according to \cite{zammitmangion2024neuralmethodsamortizedinference}: \guillemetleft \textit{minimizing the reverse KL divergence leads 
+    to approximate distributions that are under-dispersed and that tend to concentrate mass on a single mode 
+    of the target distribution, whereas minimizing the forward KL divergence leads to ones that are over-dispersed
+    and that cover all modes of the target distribution}\guillemetright. 
+    Both approaches are ubiquitious, but forward KL is easier to implement and it is likelihood-free in contrast to reverse KL. 
+\end{enumerate}
+
+
+\subsection{Neural Methods for Amortized Inference \cite{zammitmangion2024neuralmethodsamortizedinference}}
+% \subsubsection*{Problem}
+% \subsubsection*{Solution}
+They introduce Bayes risk as the common case of loss function in \cite{radev2020bayesflowlearningcomplexstochastic}, where it was the KL divergence. 
+blah-blah
+Minimizing KL divergence vs reverse KL divergence:
+\todo[size=\tiny]{different setups and different method} 
+
+Summary networks \todo[size=\tiny]{stopped reading here} 
+
+\subsubsection*{Q$\&$A}
+
+\begin{enumerate}
+    \item \textit{Average optimality} and what is it, and why do we use it? 
+\end{enumerate}
