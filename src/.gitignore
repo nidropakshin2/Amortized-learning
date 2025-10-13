@@ -1,3 +1,4 @@
+*.pdf
 *.aux
 *.bbl*
 *.bcf
@@ -8,3 +9,4 @@
 *.out
 *.run.xml
 *.toc
+*.synctex.gz
