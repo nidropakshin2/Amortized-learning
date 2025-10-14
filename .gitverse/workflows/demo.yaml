@@ -1,4 +1,4 @@
-name: Простой пример использования GitVerse CI/CD
+name: Компиляция pdf файла из tex исходников
 on:
  push:
 jobs:
