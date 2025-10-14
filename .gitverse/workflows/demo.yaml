@@ -4,7 +4,10 @@ on:
 jobs:
   build-test:
     name: build
-    runs-on: self-hosted:host
+    runs-on: DESKTOP-VAIB0PR
     steps:
       - name: Build .pdf file from .tex source through Makefile
-        run: make
+        run: |
+          ls
+          cd ..
+          make
