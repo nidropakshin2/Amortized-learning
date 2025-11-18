@@ -4,7 +4,13 @@ on:
 jobs:
   build-test:
     name: build
-    runs-on: DESKTOP-VAIB0PR
+    runs-on: self-hosted
+    working-directory: ${{ gitverse.workspace }}
+    container:
+      image: ubuntu:latest # docker образ, который будет загружен раннером и в котором будут выполняться задачи настоящего yaml-файла
+      volumes:
+         - '/mnt/c/Users/Mikhail/VS Code Projects/Amortized_Learning:/home'  # точки монтирования каталогов в проекте (project_folder) и в контейнере раннера (container_folder)
+
     steps:
       - name: Build .pdf file from .tex source through Makefile
         run: |

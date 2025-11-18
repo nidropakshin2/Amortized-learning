@@ -44,3 +44,63 @@ Summary networks \todo[size=\tiny]{stopped reading here}
 \begin{enumerate}
     \item \textit{Average optimality} and what is it, and why do we use it? 
 \end{enumerate}
+
+
+
+\subsection{Flow Matching Guide and Code \cite{lipman2024flowmatchingguidecode}}
+
+\subsubsection*{Q$\&$A}
+
+\begin{enumerate}
+    \item Prove that conditional optimal transport is really linear, i.e.
+    \[
+    p_t(x) = \int p_{t \mid 1}(x \mid x_1) q(x_1) dx_1
+    \]
+    where $p_{t \mid 1}(x \mid x_1) = \mathcal{N}(x \mid t x_1, (1-t)^2 I)$ and 
+    \[
+    X_t \sim p_t \iff X_t = t X_1 + (1 - t)X_0
+    \]
+    \item Verify that $u_t$ and $p_t$ satisfy the Continiuty Equation:
+    \[
+    \derivative{t} p_t(x) + \Div(p_t u_t) (x) = 0
+    \]
+    \begin{proof}
+        We have $p_t(x) = p_0(\psi_{t}^{-1}(x))|J(\psi_{t}^{-1}(x))|$ so 
+
+        \[
+        \derivative{t} p_t(x) = \derivative{t} p_0(\psi_{t}^{-1}(x))|J(\psi_{t}^{-1}(x))|
+        \]
+        
+    \end{proof}
+
+    \item Verify that $u_t$ and $p_t$ satisfy the Continiuty Equation:
+    \[
+    \derivative{t} p_t(x) + \Div(p_t u_t) (x) = 0
+    \]
+    \begin{proof}
+        We have $p_t(x) = p_0(\psi_{t}^{-1}(x))|J(\psi_{t}^{-1}(x))|$ so 
+
+        \[
+        \derivative{t} p_t(x) = \derivative{t} p_0(\psi_{t}^{-1}(x))|J(\psi_{t}^{-1}(x))|
+        \]
+        
+    \end{proof}
+
+\end{enumerate}
+
+
+\subsection{Approximate Bayesian Computation in Population Genetic, \cite{abcinpopulationgenetics}}
+
+\subsubsection*{Q$\&$A}
+
+\begin{enumerate}
+
+    \item Prove the formula for local-linear regression
+    \item Provide formulas for multidim local-linear regression + code examples
+        \begin{enumerate}
+            \item Make class LLRegression with methods
+            \item Train and test it in various situations (different $\delta$'s, try other kernels instead of $K_\Delta$)
+            \item Compare to analytic solutions and MCMC 
+        \end{enumerate}
+
+\end{enumerate}
