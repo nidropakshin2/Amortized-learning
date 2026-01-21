@@ -60,29 +60,44 @@ Summary networks \todo[size=\tiny]{stopped reading here}
     \[
     X_t \sim p_t \iff X_t = t X_1 + (1 - t)X_0
     \]
-    \item Verify that $u_t$ and $p_t$ satisfy the Continiuty Equation:
+    \item Verify that if $u_t$ generates $p_t$ then they satisfy the Continiuty Equation:
     \[
     \derivative{t} p_t(x) + \Div(p_t u_t) (x) = 0
     \]
     \begin{proof}
-        We have $p_t(x) = p_0(\psi_{t}^{-1}(x))|J(\psi_{t}^{-1}(x))|$ so 
-
+        We have $p_t(x) = [\psi_{t\#}p_0](x) = p_0(\psi_{t}^{-1}(x))|J_x(\psi_{t}^{-1})(x)|$. Note that
         \[
-        \derivative{t} p_t(x) = \derivative{t} p_0(\psi_{t}^{-1}(x))|J(\psi_{t}^{-1}(x))|
+        p_{t + s} = [\psi_{s\#}p_t](x)
+        \]
+        because
+        \begin{multline*}
+        [\psi_{s\#}p_t](x) = p_t (\psi_s^{-1} (x)) |J_x (\psi_s^{-1}) (x)| = [\psi_{t\#}p_0] (\psi_s^{-1}(x)) |J_x(\psi_s^{-1})(x)| = \\
+        = p_0(\psi_{t}^{-1} (\psi_s^{-1} (x))) |J_x(\psi_{t}^{-1})(\psi_s^{-1}(x))| |J_x (\psi_s^{-1}) (x) = \\
+        = p_0(\psi_{t+s}^{-1} (x)) |J_x(\psi_{t}^{-1}(\psi_s^{-1}))(x)| = \\
+        = p_0(\psi_{t+s}^{-1} (x)) |J_x(\psi_{t+s}^{-1})(x)| = [\psi_{t+s\#}p_0](x)\\
+        \end{multline*}
+        Then, we can express
+        \[
+        p_{t+h}(x) - p_t(x) = p_t(\psi_{h}^{-1}(x))|J_x(\psi_{h}^{-1})(x)| - p_t(x)
+        \]
+        Consider $\psi_{h}(y) = y + \dot{\psi_{0}}(y) h + o(h)$, take $y = \psi_h^{-1}(x) \implies \psi_h^{-1}(x) = x - \dot{\psi_{0}}(\psi_h^{-1}(x)) h + o(h) = x - u_h(x) h + o(h)$. Then 
+        \[
+        p_t(x) = p_t(x - u_h(x)h + o(h) + u_h(x) h - o(h)) 
+        \]
+        \[
+        p_t(x) = p_t(x - u_h(x)h + o(h)) + \langle \nabla_x p_t, u_h(x) h \rangle + o(h) 
+        \]
+        \[
+        p_t(x - u_h(x)h + o(h)) - p_t(x) = - \langle \nabla_x p_t, u_h(x) h \rangle + o(h) 
+        \]
+        \[
+        p_t(\psi_h^{-1}(x)) - p_t(x) = - \langle \nabla_x p_t, u_h(x) h \rangle + o(h) 
+        \]
+        As long as $\psi_h(x) \to id$ as $h \to 0$ we have 
+        \[
+        p_{t+h}(x) - p_t(x) = -\langle \nabla_x p_t, u_h(x) h \rangle + o(h) 
         \]
         
-    \end{proof}
-
-    \item Verify that $u_t$ and $p_t$ satisfy the Continiuty Equation:
-    \[
-    \derivative{t} p_t(x) + \Div(p_t u_t) (x) = 0
-    \]
-    \begin{proof}
-        We have $p_t(x) = p_0(\psi_{t}^{-1}(x))|J(\psi_{t}^{-1}(x))|$ so 
-
-        \[
-        \derivative{t} p_t(x) = \derivative{t} p_0(\psi_{t}^{-1}(x))|J(\psi_{t}^{-1}(x))|
-        \]
         
     \end{proof}
 
