@@ -1,0 +1,15 @@
+[project]
+name = "sfmpe"
+version = "0.1.0"
+description = "Sequential Flow Matching for Simulation-Based Inference"
+dependencies = [
+    "torch",
+    "torchdiffeq",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

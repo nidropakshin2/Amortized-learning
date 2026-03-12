@@ -1,9 +1,10 @@
-OUT_NAME = CV
+OUT_NAME = Flow Matching
 
-all: build clean
+all: build move
 
 build:
-	latexmk -pdf -cd -time -verbose src/main.tex
-clean: build
-# 	latexmk -cd -c $(PAPER_PATH)/src/main.tex 
+	latexmk -pdf -cd -time -verbose -f src/main.tex
+move: build
 	mv src/main.pdf "./$(OUT_NAME).pdf"
+clean: 
+	latexmk -cd -c src/main.tex 
