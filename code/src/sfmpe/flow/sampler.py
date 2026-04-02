@@ -27,8 +27,8 @@ class ODESampler:
         self.flow_model.velocity_model.eval()
         self.flow_model.velocity_model.to(x_0.device)
 
+        # x_0 = x_0.unsqueeze(-2).expand(-1, )
         theta_0 = self.flow_model.init_dist.sample((*x_0.shape[:-1], 2)).to(x_0.device)
-        
 
         t = torch.linspace(0, 1, steps=n_steps + 1).to(x_0.device)
         

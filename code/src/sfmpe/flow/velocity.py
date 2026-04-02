@@ -17,8 +17,9 @@ class SimpleVelocityField(nn.Module):
         return self.net(inp)
     
     def step(self, theta, x, t_start, t_end):
-        t_start = t_start.view(1, 1).expand(theta.shape[0], 1)
-        t_end = t_end.view(1, 1).expand(theta.shape[0], 1)
+        t_start = t_start.expand(*theta.shape[:-1], 1)
+        t_end = t_end.expand(*theta.shape[:-1], 1)
+        
         
         t_mid = (t_end + t_start) / 2
         theta_mid = theta + self.forward(t=t_start, theta=theta, x=x) * (t_mid - t_start)

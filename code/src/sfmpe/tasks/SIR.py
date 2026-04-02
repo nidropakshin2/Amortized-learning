@@ -5,6 +5,8 @@ from sfmpe.core.distributions import Distribution
 from sfmpe.core.simulator import Simulator
 from sfmpe.core.summary import Summary
 from sfmpe.tasks.base_task import Task
+from sfmpe.utils.logger import Logger, setup_logging
+
 
 
 class SIRPrior(Distribution):
@@ -157,11 +159,12 @@ class HandmadeSummary(Summary):
 
 
 class SIRTask(Task):
-    def __init__(self, config, device=torch.device('cpu')):
+    def __init__(self, config, device='cpu'):
         self.device = device
         self.simulator_parameters = config["simulator"]
         self.summary = config["summary"]
-        super().__init__()
+        self.logger_config = config.get("logger")
+        super().__init__(device=device)
         
         self.theta_dim = 2
         self.data_dim = self.summary.emb_dim
@@ -177,6 +180,16 @@ class SIRTask(Task):
             return HandmadeSummary()
         else:
             raise NotImplementedError
+    
+    def build_logger(self):
+        if self.logger_config is None:
+            return setup_logging(name="SIR", 
+                                 level=Logger.INFO, 
+                                 log_to_file=False)
+        return setup_logging(name=self.logger_config["name"],
+                             level=getattr(Logger, self.logger_config["level"]),
+                             log_to_file=True,
+                             log_file_path=self.logger_config["log_file_path"])
 
     def sample_prior(self, size):
         return self.prior.sample(size, device=self.device)

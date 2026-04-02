@@ -1,5 +1,6 @@
 shit.ipynb
-standalone_flow_matching.ipynb
 datasets*
 models*
 output*
+configs*
+tutorial.ipynb

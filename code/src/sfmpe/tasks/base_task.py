@@ -2,6 +2,7 @@ import torch
 from abc import ABC, abstractmethod
 from sfmpe.core.distributions import Distribution
 from sfmpe.core.simulator import Simulator
+from sfmpe.utils.logger import get_default_logger
 
 
 class Task(ABC):
@@ -15,6 +16,10 @@ class Task(ABC):
         self.prior = self.build_prior()
         self.simulator = self.build_simulator()
         self.summary = self.build_summary()
+        self.logger = self.build_logger()
+        
+        self.theta_dim = -1
+        self.data_dim = -1
 
     # -------- components --------
     
@@ -29,6 +34,9 @@ class Task(ABC):
     @abstractmethod
     def build_summary(self):
         return lambda x: x
+    
+    def build_logger(self):
+        return get_default_logger()
 
     # -------- helper methods --------
 

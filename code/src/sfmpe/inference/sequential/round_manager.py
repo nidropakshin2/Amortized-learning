@@ -1,10 +1,8 @@
-# TODO: поревьюить код нейронки
-# -----------------------------
-
 import torch
 
 from sfmpe.data.simulation_store import SimulationStore
 from sfmpe.data.round_dataset import RoundDataset
+from sfmpe.utils.logger import Logger, get_default_logger
 
 
 class RoundManager:
@@ -18,6 +16,7 @@ class RoundManager:
         estimator,
         proposal_params,
         device="cpu",
+        logger=None,
     ):
 
         self.task = task
@@ -25,33 +24,66 @@ class RoundManager:
         self.proposal = task.prior
         self.proposal_params = proposal_params
         self.device = device
+        
+        # Initialize logger
+        if logger is None:
+            self.logger = self.task.logger
+        else:
+            self.logger = logger
 
         self.store = SimulationStore()
+        
+        # Log initialization
+        self.logger.info(f"RoundManager initialized with device: {device}")
+        self.logger.info(f"Task: {task.__class__.__name__}")
+        self.logger.info(f"Estimator: {estimator.__class__.__name__}")
 
     def run_round(self, round_id, num_simulations):
 
+        # Log round start
+        self.logger.info(f"Starting round {round_id} with {num_simulations} simulations")
+        
         # sample parameters
-        print("Proposal", self.proposal)
+        self.logger.debug(f"Proposal distribution: {self.proposal}")
         theta = self.proposal.sample((num_simulations, ), device=self.device)
+        
+        self.logger.debug(f"Sampled {num_simulations} parameters")
 
         # simulate data
         x = self.task.simulator.simulate(theta)
+        self.logger.debug(f"Simulated data with shape: {x.shape}")
 
         # summary statistics
         features = self.task.summary(x)
+        self.logger.debug(f"Computed summary statistics with shape: {features.shape}")
 
         # store simulations
         self.store.add(theta, features, round_id)
+        self.logger.info(f"Round {round_id} completed - stored {num_simulations} simulations")
 
     def train_estimator(self, rounds=None, **train_kwargs):
 
         dataset = RoundDataset(self.store, rounds)
-
-        self.estimator.train(dataset, **train_kwargs)
+        
+        num_samples = len(dataset)
+        self.logger.info(f"Training estimator on {num_samples} samples from rounds: {rounds}")
+        
+        # Extract training parameters for logging
+        epochs = train_kwargs.get('epochs', 'default')
+        self.logger.info(f"Training parameters: epochs={epochs}")
+        
+        # Train the estimator
+        result = self.estimator.train(dataset, **train_kwargs)
+        
+        self.logger.info(f"Estimator training completed")
+        return result
 
     def update_proposal(self, posterior):
 
+        self.logger.debug(f"Updating proposal distribution")
+        self.logger.debug(f"Old proposal: {self.proposal}")
         self.proposal = posterior
+        self.logger.debug(f"New proposal: {posterior}")
 
     def run_sequential(
         self,
@@ -59,10 +91,14 @@ class RoundManager:
         sims_per_round,
         **train_kwargs,
     ):
+        
+        self.logger.info(f"Starting sequential training with {num_rounds} rounds")
+        self.logger.info(f"Simulations per round: {sims_per_round}")
+        self.logger.info(f"Training kwargs: {train_kwargs}")
 
         for r in range(num_rounds):
 
-            # print(f"Round {r}")
+            self.logger.info(f"--- Round {r+1}/{num_rounds} ---")
 
             self.run_round(r, sims_per_round)
 
@@ -70,5 +106,12 @@ class RoundManager:
 
             # TODO: решить как определить proposal либо как распределение, либо как датасет
             posterior = self.estimator.build_posterior(self.proposal_params)
-            # print("Posterior", posterior, self.proposal.params)
+            self.logger.debug(f"Built posterior: {posterior}")
             self.update_proposal(posterior)
+            
+            # Log progress
+            progress = (r + 1) / num_rounds * 100
+            self.logger.info(f"Round {r+1} completed - Progress: {progress:.1f}%")
+
+        self.logger.info(f"Sequential training completed successfully")
+        self.logger.info(f"Total simulations: {num_rounds * sims_per_round}")

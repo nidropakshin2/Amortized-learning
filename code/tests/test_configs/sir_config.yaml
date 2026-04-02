@@ -7,3 +7,7 @@ simulator:
     R: [0, 100] # int, tuple, number of Recovered individuals or bounds for following uniform distribution
     T: [60, 120] # int, tuple, simulation duration in days or bounds for following uniform distribution 
 summary: "handmade"
+logger:
+    name: "SIR" # str, name of the logger
+    level: "INFO" # str, logging level (e.g., "WARNING", "DEBUG")
+    log_file_path: "./code/tests/logs/sir.log" # str, path to log file

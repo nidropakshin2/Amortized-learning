@@ -1,3 +1,5 @@
 *.runner
 *.exe
-.gitverse
+*.gitverse
+*.vscode
+code/.pytest_cache
