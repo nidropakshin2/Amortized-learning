@@ -16,13 +16,14 @@ class RoundManager:
         self,
         task,
         estimator,
-        proposal,
+        proposal_params,
         device="cpu",
     ):
 
         self.task = task
         self.estimator = estimator
-        self.proposal = proposal
+        self.proposal = task.prior
+        self.proposal_params = proposal_params
         self.device = device
 
         self.store = SimulationStore()
@@ -30,6 +31,7 @@ class RoundManager:
     def run_round(self, round_id, num_simulations):
 
         # sample parameters
+        print("Proposal", self.proposal)
         theta = self.proposal.sample((num_simulations, ), device=self.device)
 
         # simulate data
@@ -60,13 +62,13 @@ class RoundManager:
 
         for r in range(num_rounds):
 
-            print(f"Round {r}")
+            # print(f"Round {r}")
 
             self.run_round(r, sims_per_round)
 
             self.train_estimator([r], **train_kwargs)
 
             # TODO: решить как определить proposal либо как распределение, либо как датасет
-            posterior = self.estimator.build_posterior()
-
+            posterior = self.estimator.build_posterior(self.proposal_params)
+            # print("Posterior", posterior, self.proposal.params)
             self.update_proposal(posterior)

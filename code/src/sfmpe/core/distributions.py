@@ -3,6 +3,9 @@ from abc import ABC, abstractmethod
 
 
 class Distribution(ABC):
+    def __init__(self):
+        self.params = None
+
     @abstractmethod
     def sample(self, size, **kwargs) -> torch.Tensor:
         pass

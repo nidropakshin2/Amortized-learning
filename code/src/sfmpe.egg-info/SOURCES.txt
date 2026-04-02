@@ -19,8 +19,8 @@ src/sfmpe/flow/path.py
 src/sfmpe/flow/sampler.py
 src/sfmpe/flow/velocity.py
 src/sfmpe/inference/__init__.py
-src/sfmpe/inference/fm_estimator (2).py
 src/sfmpe/inference/fm_estimator.py
+src/sfmpe/inference/pipeline.py
 src/sfmpe/inference/sequential/__init__.py
 src/sfmpe/inference/sequential/proposal.py
 src/sfmpe/inference/sequential/round_manager.py

@@ -13,6 +13,7 @@ class SIRPrior(Distribution):
             gamma_range: tuple, default=(0.05, 0.5)
             beta_range: tuple, default=(0.5, 5.0)
         """
+        super().__init__()
         self.gamma_range = gamma_range
         self.beta_range = beta_range
     

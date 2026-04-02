@@ -5,6 +5,8 @@ import os
 from sfmpe.flow.flow_model import FlowModel
 from sfmpe.data.round_dataset import RoundDataset
 from sfmpe.core.distributions import Distribution
+from sfmpe.flow.sampler import ODESampler
+from sfmpe.inference.sequential.proposal import Proposal, ProposalParams
 
 
 class FlowMatchingEstimator:
@@ -67,6 +69,8 @@ class FlowMatchingEstimator:
         
         return self.flow_model
 
-    def build_posterior(self) -> Distribution:
-        
-        return 
+    def build_posterior(self, params=None):
+        if params is None:
+            return ODESampler(self.flow_model)
+        else: 
+            return Proposal(self.flow_model, params)
