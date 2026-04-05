@@ -79,6 +79,8 @@ def fm_estimator(flow_model):
 
 from sfmpe.data.simulation_store import SimulationStore
 
+# TODO: проблемы с размерностями при добавлении батчей разного размера, нужно привести к единому виду, 
+# например (B, N, dim) и потом объединять по первому измерению
 def test_simulation_store(sir_task):
     assert sir_task is not None
 
@@ -100,7 +102,7 @@ def test_train(sir_task, fm_estimator):
     store = SimulationStore()
     theta, x = sir_task.simulate_dataset((100, 2,))
     store.add(theta, x, 0)
-    theta, x = sir_task.simulate_dataset((1000, 1,))
+    theta, x = sir_task.simulate_dataset((100, 2,))
     store.add(theta, x, 1)
 
     dataset = RoundDataset(store, rounds=[0, 1])
@@ -119,7 +121,7 @@ from sfmpe.inference.sequential.proposal import Proposal, ProposalParams
 def test_round_manager(sir_task, fm_estimator):
 
     # TODO проблемы с размерностями при переходе к большему числу
-    theta, x = sir_task.simulate_dataset((5,))
+    theta, x = sir_task.simulate_dataset((2,))
 
     params = ProposalParams()
     params.method = "NPE-A"

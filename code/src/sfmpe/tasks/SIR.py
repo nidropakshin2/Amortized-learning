@@ -126,7 +126,7 @@ class HandmadeSummary(Summary):
         I = data[..., 1]
         R = data[..., 2]
         # batch, T = I.shape
-        T = I.shape[-2]
+        T = I.shape[-1]
 
         N = S[..., 0] + I[..., 0] + R[..., 0]
         N = N.clamp(min=self.eps)
@@ -148,10 +148,10 @@ class HandmadeSummary(Summary):
         s = torch.cat([t_peak, I_peak_frac, I_mean_frac, R_final_frac, S_final_frac], dim=-1).to(data.device)
         
         B = torch.tensor([[-0.6543, -1.0543,  0.4823, -0.4612,  0.7340],
-                        [ 2.6280, -1.6988, -0.6246, -0.0949, -0.3497],
-                        [ 0.4116, -0.8507, -0.1116, -0.5067,  1.4959],
-                        [-0.2124, -0.1211, -0.8651, -1.2937,  1.2938],
-                        [ 0.0257, -0.9242, -1.4133,  0.3826, -1.0719]]).to(data.device)
+                          [ 2.6280, -1.6988, -0.6246, -0.0949, -0.3497],
+                          [ 0.4116, -0.8507, -0.1116, -0.5067,  1.4959],
+                          [-0.2124, -0.1211, -0.8651, -1.2937,  1.2938],
+                          [ 0.0257, -0.9242, -1.4133,  0.3826, -1.0719]]).to(data.device)
         
         s = torch.matmul(s, B)
         

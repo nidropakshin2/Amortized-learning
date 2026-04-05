@@ -6,3 +6,4 @@ code/tests/__pycache__
 code/tests/test_models/*
 code/tests/logs/*
 */__pycache__/*
+code/src/**/__pycache__/**

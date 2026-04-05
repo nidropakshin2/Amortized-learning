@@ -27,10 +27,9 @@ class Proposal(Distribution):
 
     def sample(self, size, **kwargs) -> torch.Tensor:
         if self.params.method == "NPE-A": 
-            # x_0 = torch.zeros(size, device=self.params.x_0.device) + self.params.x_0
-            x_0 = self.params.x_0.unsqueeze(-2)
+            x_0 = self.params.x_0
             # TODO: проблемы с размерностями
-            x_0 = x_0.expand(-1, *size, -1)
+            x_0 = x_0.unsqueeze(0).expand(*size, *x_0.shape)
             return self.sampler.sample(x_0=x_0, n_steps=self.params.n_steps)
 
         elif self.params.method == 'NPE-B':

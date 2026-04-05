@@ -31,7 +31,7 @@ class Uniform(Distribution):
 
 class Normal(Distribution):
 
-    def sample(self, size: tuple, **kwargs) -> torch.Tensor:
+    def sample(self, size, **kwargs) -> torch.Tensor:
         return torch.randn(size)
 
 

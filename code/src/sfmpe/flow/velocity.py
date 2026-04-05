@@ -7,6 +7,8 @@ class SimpleVelocityField(nn.Module):
         super().__init__()
         self.net = nn.Sequential(
             nn.Linear(1 + theta_dim + x_dim, hidden_dim), nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim), nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim), nn.ReLU(),
             nn.Linear(hidden_dim, theta_dim),
         )
 

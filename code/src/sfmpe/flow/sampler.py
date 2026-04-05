@@ -19,21 +19,20 @@ class ODESampler:
 
         t = torch.linspace(0, 1, steps=n_steps).to(x_0.device)
         y = (theta_0, x_0)
-        print("ODESampler.sample: ", theta_0, x_0)
         return odeint(ode_func, y, t)[-1] # type: ignore
 
-    def sample(self, x_0, n_steps=8, **kwargs) -> torch.Tensor:
+    def sample(self, x_0, n_steps=32, **kwargs) -> torch.Tensor:
         # WARNING: возможны проблемы с размерностями
         self.flow_model.velocity_model.eval()
         self.flow_model.velocity_model.to(x_0.device)
 
-        # x_0 = x_0.unsqueeze(-2).expand(-1, )
+        # WARNING: проблема откуда взять размерность для теты
         theta_0 = self.flow_model.init_dist.sample((*x_0.shape[:-1], 2)).to(x_0.device)
 
         t = torch.linspace(0, 1, steps=n_steps + 1).to(x_0.device)
         
         for i in range(n_steps):
             theta_0 = self.flow_model.velocity_model.step(theta=theta_0, x=x_0, t_start=t[i], t_end=t[i+1])
-        return theta_0.unsqueeze(0).detach()
+        return theta_0.detach()
 
         

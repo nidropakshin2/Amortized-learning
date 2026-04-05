@@ -19,20 +19,27 @@ class SimulationStore:
         theta : (B, N, theta_dim) or (N, theta_dim) 
         x : (B, N, x_dim) or (N, x_dim)
         """
-        if len(theta.shape) > 2:
-            theta = theta.view(-1, theta.shape[-1])
-            x = x.view(-1, x.shape[-1])
+        # if len(theta.shape) > 2:
+        #     print("Theta", theta.shape, x.shape)
+        #     # theta = theta.view(-1, theta.shape[-1])
+        #     # x = x.view(-1, x.shape[-1])
+        #     print("Theta after reshape", theta.shape, x.shape)
+        #     return 0
+        
         self.theta.append(theta.detach())
         self.x.append(x.detach())
         self.round_id.append(
-            torch.full((theta.shape[0],), round_id, device=theta.device)
+            torch.full((*theta.shape[:-1], ), round_id, device=theta.device)
         )
+        # print("SimStore1: ", self.theta[-1].shape, self.x[-1].shape, self.round_id[-1].shape)
 
     def get_all(self):
         """
         Return all stored simulations
         """
-
+        # print("SimStore2: ", self.theta[0].shape, self.x[0].shape, self.round_id[0].shape)
+        # print("SimStore3: ", self.theta[-1].shape, self.x[-1].shape, self.round_id[-1].shape)
+        
         return (
             torch.cat(self.theta, dim=0),
             torch.cat(self.x, dim=0),

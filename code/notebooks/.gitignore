@@ -3,4 +3,6 @@ datasets*
 models*
 output*
 configs*
+logs*
 tutorial.ipynb
+summary_check.py

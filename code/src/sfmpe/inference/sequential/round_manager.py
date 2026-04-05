@@ -15,6 +15,7 @@ class RoundManager:
         task,
         estimator,
         proposal_params,
+        validator=None,
         device="cpu",
         logger=None,
     ):
@@ -28,26 +29,31 @@ class RoundManager:
         # Initialize logger
         if logger is None:
             self.logger = self.task.logger
+            self.estimator.logger = self.logger
         else:
             self.logger = logger
 
         self.store = SimulationStore()
+        self.losses = []
         
         # Log initialization
         self.logger.info(f"RoundManager initialized with device: {device}")
         self.logger.info(f"Task: {task.__class__.__name__}")
         self.logger.info(f"Estimator: {estimator.__class__.__name__}")
 
-    def run_round(self, round_id, num_simulations):
+    def run_round(self, round_id, sims_per_round):
 
         # Log round start
-        self.logger.info(f"Starting round {round_id} with {num_simulations} simulations")
+        self.logger.info(f"Starting round {round_id} with {sims_per_round} simulations")
         
         # sample parameters
         self.logger.debug(f"Proposal distribution: {self.proposal}")
-        theta = self.proposal.sample((num_simulations, ), device=self.device)
+        if round_id == 0:
+            theta = self.proposal.sample((sims_per_round, *self.proposal_params.x_0.shape[:-1]), device=self.device)
+        else:
+            theta = self.proposal.sample((sims_per_round, ), device=self.device)
         
-        self.logger.debug(f"Sampled {num_simulations} parameters")
+        self.logger.debug(f"Sampled {sims_per_round} parameters")
 
         # simulate data
         x = self.task.simulator.simulate(theta)
@@ -59,7 +65,7 @@ class RoundManager:
 
         # store simulations
         self.store.add(theta, features, round_id)
-        self.logger.info(f"Round {round_id} completed - stored {num_simulations} simulations")
+        self.logger.info(f"Round {round_id} completed - stored {sims_per_round} simulations")
 
     def train_estimator(self, rounds=None, **train_kwargs):
 
@@ -73,10 +79,10 @@ class RoundManager:
         self.logger.info(f"Training parameters: epochs={epochs}")
         
         # Train the estimator
-        result = self.estimator.train(dataset, **train_kwargs)
+        loss_stats = self.estimator.train(dataset, **train_kwargs)
         
         self.logger.info(f"Estimator training completed")
-        return result
+        return loss_stats
 
     def update_proposal(self, posterior):
 
@@ -102,11 +108,13 @@ class RoundManager:
 
             self.run_round(r, sims_per_round)
 
-            self.train_estimator([r], **train_kwargs)
+            self.losses += self.train_estimator([r], **train_kwargs)
 
-            # TODO: решить как определить proposal либо как распределение, либо как датасет
             posterior = self.estimator.build_posterior(self.proposal_params)
             self.logger.debug(f"Built posterior: {posterior}")
+
+            # self.validator.
+
             self.update_proposal(posterior)
             
             # Log progress
