@@ -52,8 +52,9 @@ class RoundManager:
             theta = self.proposal.sample((sims_per_round, *self.proposal_params.x_0.shape[:-1]), device=self.device)
         else:
             theta = self.proposal.sample((sims_per_round, ), device=self.device)
+        self.logger.debug(f"x_0 shape {self.proposal_params.x_0.shape[:-1]}")
         
-        self.logger.debug(f"Sampled {sims_per_round} parameters")
+        self.logger.debug(f"Sampled {sims_per_round} parameters with shape {theta.shape}")
 
         # simulate data
         x = self.task.simulator.simulate(theta)
@@ -104,12 +105,14 @@ class RoundManager:
 
         for r in range(num_rounds):
 
-            self.logger.info(f"--- Round {r+1}/{num_rounds} ---")
+            self.logger.info(f"--- Round {r}/{num_rounds} ---")
 
             self.run_round(r, sims_per_round)
 
             self.losses += self.train_estimator([r], **train_kwargs)
-
+            # if torch.isnan(torch.tensor(self.losses[-1])):
+            #     self.logger.error(f"Loss is nan, stopping execution...")
+            #     return -1
             posterior = self.estimator.build_posterior(self.proposal_params)
             self.logger.debug(f"Built posterior: {posterior}")
 
@@ -119,7 +122,7 @@ class RoundManager:
             
             # Log progress
             progress = (r + 1) / num_rounds * 100
-            self.logger.info(f"Round {r+1} completed - Progress: {progress:.1f}%")
+            self.logger.info(f"Round {r} completed - Progress: {progress:.1f}%")
 
         self.logger.info(f"Sequential training completed successfully")
         self.logger.info(f"Total simulations: {num_rounds * sims_per_round}")

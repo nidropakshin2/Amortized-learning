@@ -41,10 +41,11 @@ class FlowMatchingEstimator:
         if kwargs:
             raise TypeError(f"train() got unexpected keyword arguments: {', '.join(kwargs.keys())}")
         
-        # def shuffle(x, n=self.batch_size, dim=0):
-        #     indices = torch.randperm(x.size(dim))[:n]
-        #     shuffled = torch.index_select(x, dim, indices)
-        #     return shuffled
+        def check_nan(x, parameter_name):
+            if torch.isnan(x).any():
+                self.logger.error(f"{parameter_name} is nan")
+                return True
+            return False 
 
         self.flow_model.to(self.device)
         self.flow_model.train()
@@ -56,15 +57,30 @@ class FlowMatchingEstimator:
             
             
             theta_1, x = self.dataset_prepocessor(dataset.theta, dataset.x) 
+            if check_nan(theta_1, "dataset theta_1"):
+                return -1
+            if check_nan(x, "dataset x"):
+                return -1
             theta_0 = self.flow_model.init_dist.sample(theta_1.shape).to(self.device)
-            
+            if check_nan(theta_0, "theta_0"):
+                return -1
+
             t = self.flow_model.path.time_dist.sample((*theta_0.shape[:-1], 1))
+            if check_nan(t, "t"):
+                return -1
             theta_t = self.flow_model.path.sample(theta_0, theta_1, t)
+            if check_nan(theta_t, "theta_t"):
+                return -1
             dtheta_t = self.flow_model.path.velocity(theta_0, theta_1)
+            if check_nan(dtheta_t, "dtheta_t"):
+                return -1
 
             v = self.flow_model.velocity_model(t=t, theta=theta_t, x=x)
-
+            if check_nan(v, "v"):
+                return -1
             loss = self.loss_fn(v, dtheta_t)
+            if check_nan(loss, "loss"):
+                return -1
             loss_stats.append(loss.detach().item())
 
             if loss < min_loss and self.path is not None:

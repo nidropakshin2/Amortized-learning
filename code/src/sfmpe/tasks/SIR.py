@@ -161,8 +161,9 @@ class HandmadeSummary(Summary):
 class SIRTask(Task):
     def __init__(self, config, device='cpu'):
         self.device = device
+        self.prior_paramters = config["prior"]
         self.simulator_parameters = config["simulator"]
-        self.summary = config["summary"]
+        self.summary_parameters = config["summary"]
         self.logger_config = config.get("logger")
         super().__init__(device=device)
         
@@ -170,16 +171,18 @@ class SIRTask(Task):
         self.data_dim = self.summary.emb_dim
     
     def build_prior(self):
-        return SIRPrior()
+        
+        return SIRPrior(gamma_range=self.prior_paramters["gamma_range"],
+                        beta_range=self.prior_paramters["beta_range"])
 
     def build_simulator(self):
         return SIRSimulator(self.simulator_parameters, device=self.device)
 
     def build_summary(self):
-        if self.summary == "handmade":
+        if self.summary_parameters == "handmade":
             return HandmadeSummary()
         else:
-            raise NotImplementedError
+            raise NotImplementedError(f"Summary {self.summary_parameters} is not implemented")
     
     def build_logger(self):
         if self.logger_config is None:

@@ -61,3 +61,6 @@ class SimulationStore:
         if len(self.theta) == 0:
             return 0
         return sum(t.shape[0] for t in self.theta)
+
+    def rounds(self):
+        return self.round_id.unique()
